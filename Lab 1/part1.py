@@ -77,7 +77,7 @@ def isFull() -> bool:
     """ 
         returns True if no empty cell is left, False otherwise 
     """
-    for col in range(len(board[0])):  # because all rows have equal number of columns
+    for col in range(len(board[0])):  # because all rows have equal number of columns and vice versa (4x4 matrix)
         for row in range(len(board)):
             if board[row][col] == '':
                 return False
@@ -107,6 +107,8 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> None:
         the move argument is either 'W', 'A', 'S', or 'D'
         directions: W for up; A for left; S for down, and D for right
     """
+    print(f"Updating the board based on the move: {move}")
+
     if move == 'W':
         for col in range(4):  # start at first column with each row varying
             tempList = []
@@ -158,8 +160,6 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> None:
 
             for i in range(len(tempList)):
                 board[row][3 - i] = tempList[i]  # starting from the right effectively shifts the numbers right
-
-    print(f"Updating the board based on the move: {move}")
 
 
 #  up to two new functions allowed to be added (if needed)
