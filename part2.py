@@ -61,16 +61,41 @@ def promptGamerForTheNextMove() -> str:  # Use as is
 
 def addANewTwoToBoard() -> None:
     """
-        adds a new 2 at an available randomly-selected cell of the board
+        adds a new 2 or 4 at an available randomly-selected cell of the board, based on probabilities; also
+        makes placing the new number harder
     """
-    if not isFullAndNoValidMove():
-        while True:
-            row = random.randint(0, 3)
-            col = random.randint(0, 3)
+    emptyCells = []
 
+    for col in range(len(board[0])):  # try to find coordinates of all empty cells to then append a 2 or 4 (see below)
+        for row in range(len(board)):
             if board[row][col] == '':
-                board[row][col] = 2
-                break
+                emptyCells.append((row, col))
+
+    if not emptyCells:  # we break if there are no more empty cells
+        return
+
+    newNum = random.choices([2, 4], weights=[2/3, 1/3], k=1)[0]  # this method gives 2 with 2/3 and 3 with 1/3 chance
+
+    newCells = []
+    for row, col in emptyCells:
+        equalAdjacent = False
+        if row > 0 and board[row - 1][col] == newNum:
+            equalAdjacent = True
+        if col > 0 and board[row][col - 1] == newNum:
+            equalAdjacent = True
+        if row < 3 and board[row + 1][col] == newNum:
+            equalAdjacent = True
+        if col < 3 and board[row][col + 1] == newNum:
+            equalAdjacent = True
+        if not equalAdjacent:
+            newCells.append((row, col))  # give (row, col) of emptyCell to newCell if current cell != adjacent cell
+
+    if newCells:  # if newCells is not empty, choose from it; else, choose any other empty cell
+        (row, col) = random.choice(newCells)
+    else:
+        (row, col) = random.choice(emptyCells)
+
+    board[row][col] = newNum
 
 
 def isFullAndNoValidMove() -> bool:
@@ -115,7 +140,7 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> None:
         for col in range(4):  # start at first column with each row varying
             tempList = []
             for row in range(4):  # work from top to bottom
-                if not isFullAndNoValidMove():
+                if board[row][col] != '':
                     tempList.append(board[row][col])
                     board[row][col] = ''
 
@@ -128,7 +153,7 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> None:
         for row in range(4):  # start at first row with each column varying
             tempList = []
             for col in range(4):  # work from left to right
-                if not isFullAndNoValidMove():
+                if board[row][col] != '':
                     tempList.append(board[row][col])
                     board[row][col] = ''
 
@@ -141,7 +166,7 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> None:
         for col in range(4):  # start at first column with each row varying
             tempList = []
             for row in range(3, -1, -1):  # start = 3, stop = -1 (col = 0), step = -1, i.e. work from bottom to top
-                if not isFullAndNoValidMove():
+                if board[row][col] != '':
                     tempList.append(board[row][col])
                     board[row][col] = ''
 
@@ -154,7 +179,7 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> None:
         for row in range(4):  # start at first row with each column varying
             tempList = []
             for col in range(3, -1, -1):  # start = 3, stop = -1 (col = 0), step = -1, i.e. work from right to left
-                if not isFullAndNoValidMove():
+                if board[row][col] != '':
                     tempList.append(board[row][col])
                     board[row][col] = ''
 
