@@ -3,6 +3,10 @@
 
 # A command-line 2048 game
 
+# For part 2, my implementation to make the game harder is to avoid placing a 2 or 4 right next to an equal number
+# vertically or horizontally to avoid immediate merges. My overall evaluation is as such: this implementation is
+# more effective with more cells being full, which makes sense as there are fewer available options to place a number.
+
 
 import random
 
@@ -62,36 +66,19 @@ def promptGamerForTheNextMove() -> str:  # Use as is
 def addANewTwoToBoard() -> None:
     """
         adds a new 2 or 4 at an available randomly-selected cell of the board, based on probabilities; also
-        makes placing the new number harder
+        makes placing the new number harder, as it tries to avoid placing the same number next to any equal vertical
+        or horizontal number.
     """
-    emptyCells = []
+    emptyCells = findEmptyCoordinates(board)
 
-    for col in range(len(board[0])):  # try to find coordinates of all empty cells to then append a 2 or 4 (see below)
-        for row in range(len(board)):
-            if board[row][col] == '':
-                emptyCells.append((row, col))
-
-    if not emptyCells:  # we break if there are no more empty cells
+    if not emptyCells:  # we break if there are no empty cells left on the board
         return
 
-    newNum = random.choices([2, 4], weights=[2/3, 1/3], k=1)[0]  # this method gives 2 with 2/3 and 3 with 1/3 chance
-
-    newCells = []
-    for row, col in emptyCells:
-        equalAdjacent = False
-        if row > 0 and board[row - 1][col] == newNum:
-            equalAdjacent = True
-        if col > 0 and board[row][col - 1] == newNum:
-            equalAdjacent = True
-        if row < 3 and board[row + 1][col] == newNum:
-            equalAdjacent = True
-        if col < 3 and board[row][col + 1] == newNum:
-            equalAdjacent = True
-        if not equalAdjacent:
-            newCells.append((row, col))  # give (row, col) of emptyCell to newCell if current cell != adjacent cell
+    newNum = getRandomNumber()
+    newCells = findNewCells(board, emptyCells, newNum)
 
     if newCells:  # if newCells is not empty, choose from it; else, choose any other empty cell
-        (row, col) = random.choice(newCells)
+        (row, col) = random.choice(newCells)  # .choice() is a python method in the "random" class
     else:
         (row, col) = random.choice(emptyCells)
 
@@ -110,6 +97,7 @@ def isFullAndNoValidMove() -> bool:
                 return False
             if row < len(board) - 1 and board[row][col] == board[row + 1][col]:
                 return False
+
     return True
 
 
@@ -125,6 +113,7 @@ def getCurrentScore() -> int:
                 score += board[row][col]
             else:
                 score += 0
+
     return score
 
 
@@ -189,13 +178,18 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> None:
                 board[row][3 - i] = tempList[i]  # starting from the right effectively shifts the numbers right
 
 
-#  up to two new functions allowed to be added (if needed)
+#  new functions allowed to be added (if needed)
 #  as usual, they must be documented well
 #  they have to be placed below this line
 
 
 def mergeElements(tempList):
+    """
+        Finds any potential merges in the given list. If possible, add the current number by itself.
+        Else, simply iterate through and merge as is. Return type is a list.
+    """
     mergedList = []  # initialize an empty list to be merged later
+
     i = 0
     while i < len(tempList):
         if i + 1 < len(tempList) and tempList[i] == tempList[i + 1]:  # if in range AND is adjacent/equal
@@ -204,7 +198,53 @@ def mergeElements(tempList):
         else:
             mergedList.append(tempList[i])  # else, iterate through and merge the non-equal number to list
             i += 1
+
     return mergedList
+
+
+def findEmptyCoordinates(board):
+    """
+        Finds and returns the coordinates of all empty cells to later be used for "difficulty" evaluation.
+    """
+    emptyCells = []
+
+    for col in range(len(board[0])):  # try to find coordinates of all empty cells to then append a 2 or 4 (see below)
+        for row in range(len(board)):
+            if board[row][col] == '':
+                emptyCells.append((row, col))
+
+    return emptyCells
+
+
+def getRandomNumber():
+    """
+        This method returns 2 with 2/3 chance and 3 with 1/3 chance
+    """
+    return random.choices([2, 4], weights=[2/3, 1/3], k=1)[0]  # .choices() is a python method in the "random" class
+
+
+def findNewCells(board, emptyCells, newNum):
+    """
+        Finds more difficult cells. This means it searches through to find if any vertically or
+        horizontally adjacent number is equal to the current number. If so, the flag turns true
+        and indicates that it is an "easy" cell and won't be appended to newCells. Returns a list.
+    """
+
+    newCells = []
+    for row, col in emptyCells:
+        equalAdjacent = False
+        if row > 0 and board[row - 1][col] == newNum:
+            equalAdjacent = True
+        if row < 3 and board[row + 1][col] == newNum:
+            equalAdjacent = True
+        if col > 0 and board[row][col - 1] == newNum:
+            equalAdjacent = True
+        if col < 3 and board[row][col + 1] == newNum:
+            equalAdjacent = True
+        if not equalAdjacent:
+            newCells.append((row, col))  # give (row, col) of emptyCell to newCell if current cell != adjacent cell
+
+    return newCells
 
 
 if __name__ == "__main__":  # Use as is

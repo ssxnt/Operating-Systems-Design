@@ -168,10 +168,15 @@ def updateTheBoardBasedOnTheUserMove(move: str) -> None:
 
 
 def mergeElements(tempList):
+    """
+        Finds any potential merges in the given list. If possible, add the current number by itself.
+        Else, simply iterate through and merge as is. Return type is a list.
+    """
     mergedList = []  # initialize an empty list to be merged later
+
     i = 0
     while i < len(tempList):
-        if i + 1 < len(tempList) and tempList[i] == tempList[i + 1]:  # if iterator is in range AND is adjacent/equal
+        if i + 1 < len(tempList) and tempList[i] == tempList[i + 1]:  # if in range AND is adjacent/equal
             mergedList.append(tempList[i] + tempList[i])
             i += 2  # add 2 to ignore the next cell, which already has been merged by the line above
         else:
