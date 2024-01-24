@@ -87,8 +87,7 @@ def addANewTwoToBoard() -> None:
 
 def isFullAndNoValidMove() -> bool:
     """
-        returns True if no empty cell is left, False otherwise; also finds if
-        there exists any valid move horizontally or vertically.
+        returns True if no empty cell is left, False otherwise
     """
     for col in range(len(board[0])):  # because all rows have equal number of columns and vice versa (4x4 matrix)
         for row in range(len(board)):
