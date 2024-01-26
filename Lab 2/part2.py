@@ -16,21 +16,37 @@ class ComplexNumber:
         self.imag = imag
 
     def add(self, new: ComplexNumber) -> ComplexNumber:
+        """
+           adds this' complex number by new complex number
+           returns the result as a complex number (type ComplexNumber)
+        """
         a = self.real + new.real
         b = self.imag + new.imag
         return ComplexNumber(a, b)
 
     def subtract(self, new: ComplexNumber) -> ComplexNumber:
+        """
+           subtracts this' complex number by new complex number
+           returns the result as a complex number (type ComplexNumber)
+        """
         a = self.real - new.real
         b = self.imag - new.imag
         return ComplexNumber(a, b)
 
     def multiply(self, new: ComplexNumber) -> ComplexNumber:
+        """
+           multiplies this' complex number by new complex number
+           returns the result as a complex number (type ComplexNumber)
+        """
         a = self.real * new.real - self.imag * new.imag
         b = self.real * new.imag + self.imag * new.real
         return ComplexNumber(a, b)
 
     def divide(self, new: ComplexNumber) -> ComplexNumber:
+        """
+           divides 'this' complex number by new complex number
+           returns the result as a complex number (type ComplexNumber)
+        """
         if not new.real and not new.imag:
             return ComplexNumber(float('NaN'), float('NaN'))
         else:
@@ -42,7 +58,7 @@ class ComplexNumber:
             aMantissa = a - int(a)
             bMantissa = b - int(b)
             if not aMantissa or not bMantissa:  # if the mantissa is .0, then just truncate it; else, keep as is
-                if not aMantissa and not bMantissa:
+                if not aMantissa and not bMantissa:  # this makes it easier to read (better UI/UX)
                     return ComplexNumber(int(a), int(b))
                 elif not aMantissa:
                     return ComplexNumber(int(a), b)
@@ -51,21 +67,24 @@ class ComplexNumber:
             return ComplexNumber(a, b)
 
     def toString(self) -> str:
-        if self.real != self.real and self.imag != self.imag:
+        """
+            returns a string representation of 'this' complex number
+        """
+        if self.real != self.real and self.imag != self.imag:  # to check manually if number is "NaN"
             return "NaN"
-        if not self.real and not self.imag:
+        if not self.real and not self.imag:  # if zero return zero
             return '0'
         if not self.imag:
             return str(self.real)
         elif not self.real:
-            if self.imag == 1:
+            if self.imag == 1:  # if 1 or -1 ignore the 1 or -1 before the i
                 return 'i'
             elif self.imag == -1:
                 return '-i'
             return str(self.imag) + 'i'
         else:
             if self.imag > 0:
-                if self.imag == 1:
+                if self.imag == 1:  # check if the complex part is neg or pos and adjust accordingly
                     return str(self.real) + " + i"
                 return str(self.real) + " + " + str(self.imag) + 'i'
             else:
@@ -79,7 +98,7 @@ class GUI:
         this class implements the GUI for our program
         use as is.
         The add, subtract, multiply and divide methods invoke the corresponding
-        methods from the Rational class to calculate the result to display.
+        methods from the ComplexNumber class to calculate the result to display.
     """
 
     def __init__(self):
@@ -89,7 +108,7 @@ class GUI:
         """
         window = Tk()
         window.title("Complex Numbers")
-        window.geometry("250x190")
+        window.geometry("250x190")  # arbitrary chosen to make the window bigger
 
         # Labels and entries for the first complex number
         frame1 = Frame(window)
@@ -173,6 +192,7 @@ class GUI:
             return (com1, com2)
         except:
             return (ComplexNumber(float('NaN'), float('NaN')), ComplexNumber(float('NaN'), float('NaN')))
+            # if an entry value is missing, cause NaN
 
 
 if __name__ == "__main__": GUI()
