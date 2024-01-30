@@ -18,6 +18,7 @@ def checkColumn(puzzle: list, column: int):
         if num in repeat or num not in range(1, 10):
             print(f"Column {column} not valid")
             return
+        repeat.add(num)
     print(f"Column {column} valid")
 
 
@@ -31,14 +32,14 @@ def checkRow(puzzle: list, row: int):
 
         As usual, this function must not mutate puzzle
     """
-    repeat = set(puzzle[row])
+    repeat = set(puzzle[row])  # no need to add nums to this because this creates a set of the entire row already
     valid = True
 
     for num in repeat:
         if num not in range(1, 10):
             valid = False
 
-    if valid and len(repeat) == 9:
+    if valid and len(repeat) == 9:  # if len < 9, this means there was a duplicate and the row is thus invalid
         print(f"Row {row} valid")
     else:
         print(f"Row {row} not valid")
@@ -58,7 +59,17 @@ def checkSubgrid(puzzle: list, subgrid: int):
 
         As usual, this function must not mutate puzzle
     """
+    repeat = set()
+    initRow, initCol = 3 * int(subgrid / 3), 3 * (subgrid % 3)
 
+    for row in range(initRow, initRow + 3):
+        for col in range(initCol, initCol + 3):
+            num = puzzle[row][col]
+            if num in repeat or num not in range(1, 10):
+                print(f"Subgrid {subgrid} not valid")
+                return
+            repeat.add(num)
+    print(f"Subgrid {subgrid} valid")
 
 
 if __name__ == "__main__":
@@ -83,7 +94,7 @@ if __name__ == "__main__":
              [8, 3, 7, 6, 1, 4, 2, 9, 5]
              ]
 
-    testcase = test1  # modify here for other testcases
+    testcase = test2  # modify here for other testcases
     SIZE = 9
 
     for col in range(SIZE):  # checking all columns
