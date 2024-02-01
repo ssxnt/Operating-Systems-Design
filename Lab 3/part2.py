@@ -14,14 +14,14 @@ def checkColumn(puzzle: list, column: int):
 
         As usual, this function must not mutate puzzle
     """
-    repeat = set()  # to track how many unique numbers there are and thus if there are any repeats
+    repeat = []  # to track how many unique numbers there are and thus if there are any repeats
 
     for row in range(len(puzzle)):
         num = puzzle[row][column]
         if num in repeat or num not in range(1, 10):
             print(f"Column {column} not valid")
             return
-        repeat.add(num)
+        repeat.append(num)
     print(f"Column {column} valid")
 
 
@@ -62,7 +62,7 @@ def checkSubgrid(puzzle: list, subgrid: int):
 
         As usual, this function must not mutate puzzle
     """
-    repeat = set()
+    repeat = []
     initRow, initCol = 3 * int(subgrid / 3), 3 * (subgrid % 3)  # mathematical way to determine starting rows/cols
 
     for row in range(initRow, initRow + 3):
@@ -71,7 +71,7 @@ def checkSubgrid(puzzle: list, subgrid: int):
             if num in repeat or num not in range(1, 10):
                 print(f"Subgrid {subgrid} not valid")
                 return
-            repeat.add(num)
+            repeat.append(num)
     print(f"Subgrid {subgrid} valid")
 
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
              [8, 3, 7, 6, 1, 4, 2, 9, 5]
              ]
 
-    testcase = test1  # modify here for other testcases
+    testcase = test2  # modify here for other testcases
     SIZE = 9
 
     processes = []  # to keep track of all started processes
