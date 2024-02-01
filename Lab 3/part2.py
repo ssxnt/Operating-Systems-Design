@@ -1,6 +1,9 @@
 # student name: Sant Sumetpong
 # student number: 24821563
 
+import multiprocessing as mp
+
+
 def checkColumn(puzzle: list, column: int):
     """
         param puzzle: a list of lists containing the puzzle
@@ -94,12 +97,25 @@ if __name__ == "__main__":
              [8, 3, 7, 6, 1, 4, 2, 9, 5]
              ]
 
-    testcase = test2  # modify here for other testcases
+    testcase = test1  # modify here for other testcases
     SIZE = 9
 
-    for col in range(SIZE):  # checking all columns
-        checkColumn(testcase, col)
-    for row in range(SIZE):  # checking all rows
-        checkRow(testcase, row)
-    for subgrid in range(SIZE):  # checking all subgrids
-        checkSubgrid(testcase, subgrid)
+    processes = []  # to keep track of all started processes
+
+    for col in range(SIZE):
+        process = mp.Process(target=checkColumn, args=(testcase, col))
+        processes.append(process)
+        process.start()
+
+    for row in range(SIZE):
+        process = mp.Process(target=checkRow, args=(testcase, row))
+        processes.append(process)
+        process.start()
+
+    for subgrid in range(SIZE):
+        process = mp.Process(target=checkSubgrid, args=(testcase, subgrid))
+        processes.append(process)
+        process.start()
+
+    for process in processes:  # when all processes have finished, join them
+        process.join()
