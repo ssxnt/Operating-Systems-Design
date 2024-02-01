@@ -59,7 +59,7 @@ def checkSubgrid(puzzle: list, subgrid: int):
 
         As usual, this function must not mutate puzzle
     """
-    repeat = [set()]
+    repeat = []
     initRow, initCol = 3 * int(subgrid / 3), 3 * (subgrid % 3)  # mathematical way to determine starting rows/cols
 
     for row in range(initRow, initRow + 3):
