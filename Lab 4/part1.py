@@ -4,31 +4,31 @@
 import threading as t
 
 
-def bsort(nums: list) -> None:  # my version of a bubble sort algorithm
-    for i in range(len(nums)):
-        for j in range(0, len(nums) - i - 1):
-            if nums[j] > nums[j + 1]:
-                nums[j], nums[j + 1] = nums[j + 1], nums[j]
-
-
 def sortingWorker(firstHalf: bool) -> None:
     """
-       If param firstHalf is True, the method
-       takes the first half of the shared list testcase,
-       and stores the sorted version of it in the shared
-       variable sortedFirstHalf.
-       Otherwise, it takes the second half of the shared list
-       testcase, and stores the sorted version of it in
-       the shared variable sortedSecondHalf.
-       The sorting is ascending, and you can choose any
-       sorting algorithm of your choice and code it.
+    If param firstHalf is True, the method
+    takes the first half of the shared list testcase,
+    and stores the sorted version of it in the shared
+    variable sortedFirstHalf.
+    Otherwise, it takes the second half of the shared list
+    testcase, and stores the sorted version of it in
+    the shared variable sortedSecondHalf.
+    The sorting is ascending, and you can choose any
+    sorting algorithm of your choice and code it.
     """
+    def bsort(nums: list) -> None:  # my version of a bubble sort algorithm
+        for i in range(len(nums)):
+            for j in range(0, len(nums) - i - 1):
+                if nums[j] > nums[j + 1]:  # if current bigger than adjacent, swap
+                    nums[j], nums[j + 1] = nums[j + 1], nums[j]
+
     n = int(len(testcase) / 2)
+
     if firstHalf:
-        sortedFirstHalf[:] = testcase[:n]
+        sortedFirstHalf[:] = testcase[:n]  # first half of list
         bsort(sortedFirstHalf)
     else:
-        sortedSecondHalf[:] = testcase[n:]
+        sortedSecondHalf[:] = testcase[n:]  # second half of list
         bsort(sortedSecondHalf)
 
 
@@ -40,7 +40,7 @@ def mergingWorker() -> None:
     """
     global SortedFullList
     i, j = 0, 0
-    while i < len(sortedFirstHalf) and j < len(sortedSecondHalf):
+    while i < len(sortedFirstHalf) and j < len(sortedSecondHalf):  # compare both lists and append to main list
         if sortedFirstHalf[i] < sortedSecondHalf[j]:
             SortedFullList.append(sortedFirstHalf[i])
             i += 1
@@ -49,7 +49,6 @@ def mergingWorker() -> None:
             j += 1
     SortedFullList += sortedFirstHalf[i:] + sortedSecondHalf[j:]  # account for any remaining values after sorted merge
 
-
 if __name__ == "__main__":
     # shared variables
     testcase = [8, 5, 7, 7, 4, 1, 3, 2]
@@ -57,7 +56,6 @@ if __name__ == "__main__":
     sortedSecondHalf: list = []
     SortedFullList: list = []
 
-    # to implement the rest of the code below, as specified
     t1 = t.Thread(target=sortingWorker, args=(True,))
     t2 = t.Thread(target=sortingWorker, args=(False,))
     t12 = t.Thread(target=mergingWorker)
