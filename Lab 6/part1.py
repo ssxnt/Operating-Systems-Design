@@ -6,7 +6,7 @@ import random  # is used to cause some randomness
 import time  # is used to cause some delay to simulate thinking or eating times
 
 
-def philosopher(id: int, chopstick: list, diningSemaphore: mp.Semaphore()):
+def philosopher(id: int, chopstick: list, dining_semaphore: mp.Semaphore()):
     """
        implements a thinking-eating philosopher
        id is used to identifier philosopher #id (id is between 0 to numberOfPhilosophers-1)
@@ -22,7 +22,7 @@ def philosopher(id: int, chopstick: list, diningSemaphore: mp.Semaphore()):
         time.sleep(round(random.uniform(.1, .3), 2))  # a random delay (100 to 300 ms)
 
     for _ in range(6):  # to make testing easier, instead of a forever loop we use a finite loop
-        diningSemaphore.acquire()  # acquire semaphore for dining, i.e. ensure only 4 are picking up the chopsticks
+        dining_semaphore.acquire()  # acquire semaphore for dining, i.e. ensure only 4 are picking up the chopsticks
 
         leftChopstick = id
         rightChopstick = (id + 1) % 5  # 5 is number of philosophers
@@ -40,7 +40,7 @@ def philosopher(id: int, chopstick: list, diningSemaphore: mp.Semaphore()):
         print(f"DEBUG: philosopher{id} is to release chopstick{leftChopstick}")
         chopstick[leftChopstick].release()
 
-        diningSemaphore.release()  # release the semaphore, now the waiting philosopher can dine and use chopsticks
+        dining_semaphore.release()  # release the semaphore, now the waiting philosopher can dine and use chopsticks
 
         thinkForAWhile()  # use this line as is
 
@@ -52,11 +52,11 @@ if __name__ == "__main__":
     for i in range(numberOfPhilosophers):
         semaphoreList.append(mp.Semaphore(1))  # one semaphore per chopstick
 
-    diningSemaphore = mp.Semaphore(4)  # 4 semaphores to allow 4 philosophers to dine at any given time
+    dining_semaphore = mp.Semaphore(4)  # 4 semaphores to allow 4 philosophers to dine at any given time
 
     philosopherProcessList = list()
     for i in range(numberOfPhilosophers):  # instantiate all processes representing philosophers
-        philosopherProcessList.append(mp.Process(target=philosopher, args=(i, semaphoreList, diningSemaphore)))
+        philosopherProcessList.append(mp.Process(target=philosopher, args=(i, semaphoreList, dining_semaphore)))
     for j in range(numberOfPhilosophers):  # start all child processes
         philosopherProcessList[j].start()
     for k in range(numberOfPhilosophers):  # join all child processes

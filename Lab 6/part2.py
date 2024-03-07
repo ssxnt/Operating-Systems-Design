@@ -25,19 +25,21 @@ def philosopher(id: int, chopstick: list):
         leftChopstick = id
         rightChopstick = (id + 1) % 5  # 5 is number of philosophers
 
-        while True:
-            chopstick[leftChopstick].acquire(block=False)
-            if chopstick[leftChopstick].acquire(block=False):
-                print(f"DEBUG: philosopher{id} has chopstick{leftChopstick}")
-                chopstick[rightChopstick].acquire(block=False)
-                if chopstick[rightChopstick].acquire(block=False):
-                    print(f"DEBUG: philosopher{id} has chopstick{rightChopstick}")
-                    break
-                else:
-                    chopstick[leftChopstick].release()
-            time.sleep(round(random.uniform(.1, .3), 2))  # a random delay (100 to 300 ms)
+        # my rationale for doing block=False is below
+        get_l_cs = chopstick[leftChopstick].acquire(block=False)  # attempt to get left chopstick
+        get_r_cs = chopstick[rightChopstick].acquire(block=False)  # attempt to get right chopstick
+
+        if not (get_l_cs and get_r_cs):  # if BOTH chopsticks are not acquired, release the current chopstick
+            if get_l_cs:
+                chopstick[leftChopstick].release()
+            if get_r_cs:
+                chopstick[rightChopstick].release()
+            time.sleep(round(random.uniform(.1, .3), 2))  # a random delay (100 to 300 ms), before reattempting
+            continue  # skip the rest of the code below and reiterate the loop until both chopsticks are acquired
 
         # to simplify, try statement not used here
+        print(f"DEBUG: philosopher{id} has chopstick{leftChopstick}")
+        print(f"DEBUG: philosopher{id} has chopstick{rightChopstick}")
 
         eatForAWhile()  # use this line as is
 
@@ -63,3 +65,7 @@ if __name__ == "__main__":
         philosopherProcessList[j].start()
     for k in range(numberOfPhilosophers):  # join all child processes
         philosopherProcessList[k].join()
+
+# 'block=False' means the philosopher tries to get a chopstick with no blocking; thus, if no chopsticks are available,
+# the method returns 'False', which allows the philosopher to release any chopsticks being held and try again later,
+# and this avoids a deadlock scenario where the philosopher holds on to the chopstick indefinitely.
