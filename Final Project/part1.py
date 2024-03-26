@@ -247,7 +247,7 @@ class Game():
             
             if not inside:
                 valid_prey_coords = True  # prey coords are valid
-                self.queue.put({"prey": prey_coords})                
+                self.queue.put({"prey": prey_coords})  # new task to be performed by queue         
 
 
 if __name__ == "__main__":
