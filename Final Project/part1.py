@@ -28,7 +28,7 @@ class Gui():
         # some GUI constants
         scoreTextXLocation = 60
         scoreTextYLocation = 15
-        textColour = "white"
+        textColour = "orange"
         # instantiate and create gui
         self.root = Tk()
         self.canvas = Canvas(self.root, width=WINDOW_WIDTH,
@@ -211,8 +211,8 @@ if __name__ == "__main__":
     SNAKE_ICON_WIDTH = 15
     # add the specified constant PREY_ICON_WIDTH here
 
-    BACKGROUND_COLOUR = "green"  # you may change this colour if you wish
-    ICON_COLOUR = "yellow"  # you may change this colour if you wish
+    BACKGROUND_COLOUR = "aqua"  # you may change this colour if you wish
+    ICON_COLOUR = "pink"  # you may change this colour if you wish
 
     gameQueue = queue.Queue()  # instantiate a queue object using python's queue class
 
