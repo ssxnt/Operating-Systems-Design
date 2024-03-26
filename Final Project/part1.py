@@ -131,7 +131,10 @@ class Game():
         SPEED = 0.15  # speed of snake updates (sec)
         while self.gameNotOver:
             # complete the method implementation below
-            pass  # remove this line from your implementation
+            while self.gameNotOver():
+                self.move()
+                time.sleep(SPEED)
+            # pass  # remove this line from your implementation
 
     def whenAnArrowKeyIsPressed(self, e) -> None:
         """
@@ -165,6 +168,7 @@ class Game():
         """
         NewSnakeCoordinates = self.calculateNewCoordinates()
         # complete the method implementation below
+        
 
     def calculateNewCoordinates(self) -> tuple:
         """
@@ -201,7 +205,47 @@ class Game():
             away from the walls.
         """
         THRESHOLD = 15  # sets how close prey can be to borders
+        
         # complete the method implementation below
+        def is_prey_in_snake(self, snake_pos, prey_pos) -> bool:
+            """
+                checks whether or not the newly and randomly generated prey
+                coordiantes are located inside the snake.
+
+                Arguments:
+                    snake_pos (list): single (x, y) coordinate of snake
+                    prey_pos (tuple): entire set of coordinates of prey
+
+                Returns:
+                    bool: if horizontal and vertical containment is true --> overlap!
+            """
+            xs, ys = snake_pos  # unpack snake and prey positions
+            xp1, yp1, xp2, yp2 = prey_pos
+            overlap_x = xp1 <= xs <= xp2  # check for horizontal and vertical overlapping
+            overlap_y = yp1 <= ys <= yp2
+            
+            return overlap_x and overlap_y  
+        
+        prey_width, prey_height = PREY_ICON_WIDTH  # initialize both x/y min and prey w/h for clarity, even if square
+        x_min, y_min = THRESHOLD
+        x_max = WINDOW_WIDTH - THRESHOLD - prey_width  # spawn prey outside threshold of border
+        y_max = WINDOW_HEIGHT - THRESHOLD - prey_height
+        valid_prey_coords = False
+        
+        while not valid_prey_coords:
+            x = random.randint(x_min, x_max)
+            y = random.randint(y_min, y_max)
+            prey_coords = (x, y, x + prey_width, y + prey_height)  # random coords are generated for prey
+            inside = False
+            
+            for snake_coord in self.snakeCoordinates:  # iterate and check entire length of snake for any prey
+                if self.is_prey_in_snake(snake_coord, prey_coords):  # if prey is inside snake
+                    inside = True
+                    break
+            
+            if not inside:
+                valid_prey_coords = True
+                self.queue.put({"prey": prey_coords})                    
 
 
 if __name__ == "__main__":
@@ -210,6 +254,7 @@ if __name__ == "__main__":
     WINDOW_HEIGHT = 300
     SNAKE_ICON_WIDTH = 15
     # add the specified constant PREY_ICON_WIDTH here
+    PREY_ICON_WIDTH = 10
 
     BACKGROUND_COLOUR = "aqua"  # you may change this colour if you wish
     ICON_COLOUR = "pink"  # you may change this colour if you wish
