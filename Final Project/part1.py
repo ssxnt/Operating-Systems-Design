@@ -213,7 +213,7 @@ class Game():
                 coordiantes are located inside the snake.
 
                 Arguments:
-                    snake_pos (list): single (x, y) coordinate of snake
+                    snake_pos (list): single [x, y] coordinate of snake
                     prey_pos (tuple): entire set of coordinates of prey
 
                 Returns:
