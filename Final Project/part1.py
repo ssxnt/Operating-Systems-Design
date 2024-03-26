@@ -246,8 +246,8 @@ class Game():
                     break
             
             if not inside:
-                valid_prey_coords = True
-                self.queue.put({"prey": prey_coords})                    
+                valid_prey_coords = True  # prey coords are valid
+                self.queue.put({"prey": prey_coords})                
 
 
 if __name__ == "__main__":
