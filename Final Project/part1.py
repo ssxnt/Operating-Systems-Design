@@ -231,7 +231,7 @@ class Game():
         x_min = THRESHOLD
         y_min = THRESHOLD
         x_max = WINDOW_WIDTH - THRESHOLD - prey_width  # spawn prey outside threshold of border
-        y_max = WINDOW_HEIGHT - THRESHOLD - prey_height
+        y_max = WINDOW_HEIGHT - THRESHOLD - prey_height  # prey_w/h is subtracted in case magic number > 15
         valid_prey_coords = False
         
         while not valid_prey_coords:
