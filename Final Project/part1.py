@@ -131,7 +131,7 @@ class Game():
         SPEED = 0.15  # speed of snake updates (sec)
         while self.gameNotOver:
             # complete the method implementation below
-            while self.gameNotOver():
+            while self.gameNotOver:
                 self.move()
                 time.sleep(SPEED)
             # pass  # remove this line from your implementation
@@ -207,7 +207,7 @@ class Game():
         THRESHOLD = 15  # sets how close prey can be to borders
         
         # complete the method implementation below
-        def is_prey_in_snake(self, snake_pos, prey_pos) -> bool:
+        def is_prey_in_snake(snake_pos, prey_pos) -> bool:
             """
                 checks whether or not the newly and randomly generated prey
                 coordiantes are located inside the snake.
@@ -224,10 +224,12 @@ class Game():
             overlap_x = xp1 <= xs <= xp2  # check for horizontal and vertical overlapping
             overlap_y = yp1 <= ys <= yp2
             
-            return overlap_x and overlap_y  
+            return overlap_x and overlap_y 
         
-        prey_width, prey_height = PREY_ICON_WIDTH  # initialize both x/y min and prey w/h for clarity, even if square
-        x_min, y_min = THRESHOLD
+        prey_width = PREY_ICON_WIDTH
+        prey_height = PREY_ICON_WIDTH  # initialize both x/y min and prey w/h for clarity, even if square
+        x_min = THRESHOLD
+        y_min = THRESHOLD
         x_max = WINDOW_WIDTH - THRESHOLD - prey_width  # spawn prey outside threshold of border
         y_max = WINDOW_HEIGHT - THRESHOLD - prey_height
         valid_prey_coords = False
@@ -239,7 +241,7 @@ class Game():
             inside = False
             
             for snake_coord in self.snakeCoordinates:  # iterate and check entire length of snake for any prey
-                if self.is_prey_in_snake(snake_coord, prey_coords):  # if prey is inside snake
+                if is_prey_in_snake(snake_coord, prey_coords):  # if prey is inside snake
                     inside = True
                     break
             
