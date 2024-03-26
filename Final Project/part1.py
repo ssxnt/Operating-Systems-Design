@@ -210,7 +210,7 @@ class Game():
         def is_prey_in_snake(snake_pos, prey_pos) -> bool:
             """
                 checks whether or not the newly and randomly generated prey
-                coordiantes are located inside the snake.
+                coordinates are located inside the snake.
 
                 Arguments:
                     snake_pos (list): single [x, y] coordinate of snake
