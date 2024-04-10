@@ -6,7 +6,7 @@
 from tkinter import *
 import socket
 import threading
-from multiprocessing import current_process  # only needed for getting the current process name
+from multiprocessing import current_process  # required for getting the current process name
 
 class ChatClient:
     """
@@ -15,53 +15,75 @@ class ChatClient:
     It uses the tkinter module to create the GUI for the chat client.
     """
     # To implement
-    def __init__(self, guiScreen):
-        """
-        gui setup
-        """
-        self.window_open = True
+    def __init__(self, guiScreen, clientName=current_process().name):
         self.guiScreen = guiScreen
-        self.guiSetup()
+        self.clientName = clientName
+        self.clientRunning = True
+
         self.socketSetUp()
+        self.guiSetup()
+
+        self.guiScreen.protocol("WM_DELETE_WINDOW", self.terminateConnection)
         
+    def socketSetUp(self):
+        self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.clientSocket.bind(('127.0.0.1', 0))
+        self.address = self.clientSocket.getsockname()
+        self.clientSocket.connect(('127.0.0.1', 11111))
+
+        threading.Thread(target=self.rcvMessage, daemon=True).start()
+
     def guiSetup(self):
-        """
-        sets up GUI
-        """
-        self.chatMessage = Text(self.guiScreen, height=40)
-        self.chatMessage.pack(fill=BOTH , expand=TRUE)
-
-    def socketSetUp(self, host='127.0.0.1', port=11111):  # random/arbitrary port number
-        """
-        sets up client socket 
-        """
-        self.host = host
-        self.port = port
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client_socket.connect((self.host, self.port))
-        threading.Thread(target=self.rcvMessages).start()
+        self.guiScreen.title(f"Chat {self.clientName}")
         
-    def sendMessage(self, messageToSend):
-        """
-        sends a message to server.
-        """
-        msg = messageToSend
-        self.client_socket.sendall(msg.encode('utf-8'))
-        
-    def rcvMessages(self):
-        """
-        receives messages from server.
-        """
-        while True:
-            message = self.client_socket.recv(1024).decode('utf-8')
-            self.displayMessage(message)
-            
-    def displayMessage(self, messageToDisplay):
-        """
-        displays message on gui
-        """
-        self.chatMessage.insert(END, messageToDisplay + '\n')
+        self.guiFrame = Frame(self.guiScreen)
+        self.guiFrame.pack(fill='x')
 
+        self.chatEntry = Label(self.guiFrame, text="Message", font=("Courier", 11))
+        self.chatEntry.grid(row=0, column=0)
+
+        self.chatEntry = Entry(self.guiFrame, width=50)
+        self.chatEntry.grid(row=0, column=1)
+        self.chatEntry.bind('<Return>', self.sendMessage)
+
+        self.chatHistoryLabel = Label(self.guiScreen, text="Chat Window:", font=("Courier", 11))
+        self.chatHistoryLabel.pack(fill='x')
+
+        self.chatHistory = Text(self.guiScreen, state='disabled', font=("Courier", 11))
+        self.chatHistory.pack(side='left', fill='both', expand=True)
+
+        self.chatHistory.tag_configure('center', justify='center')
+
+    def sendMessage(self, event=None):
+        msg = self.chatEntry.get()
+        if msg:
+            self.clientSocket.sendall(msg.encode('utf-8'))
+            self.chatEntry.delete(0, END)
+            self.displayMessage(f"You: {msg}", 'center')
+
+    def rcvMessage(self):
+        while self.clientRunning:
+            try:
+                msg = self.clientSocket.recv(1024).decode('utf-8')
+                if msg:
+                    self.displayMessage(msg, 'left')
+            except Exception:
+                print(f"Connection closed by server due to {Exception}")
+                self.terminateConnection()
+
+    def displayMessage(self, msg, align):
+        self.chatHistory.config(state=NORMAL)
+        self.chatHistory.insert('end', msg + '\n', align)
+        self.chatHistory.config(state=DISABLED)
+        self.chatHistory.yview(END)
+
+    def terminateConnection(self):
+        self.clientRunning = False
+        try:
+            self.clientSocket.close()
+        except Exception:
+            print(f"Error closing socket: {Exception}")
+        self.guiScreen.destroy()
 
 def main(): #Note that the main function is outside the ChatClient class
     window = Tk()
@@ -71,3 +93,4 @@ def main(): #Note that the main function is outside the ChatClient class
 
 if __name__ == '__main__': # May be used ONLY for debugging
     main()
+    
