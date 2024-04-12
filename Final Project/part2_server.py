@@ -20,21 +20,21 @@ class ChatServer:
     def __init__(self, window):
         self.window = window
         self.clients = []
-        self.guiSetup()
+        self.guiSetup()  # set up the gui and server socket
         self.socketSetup()
         
     def socketSetup(self, host='127.0.0.1', port=11111):
-        self.host = host
+        self.host = host  # get host and port from args
         self.port = port
-        self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.serverSocket.bind((self.host, self.port))
-        self.serverSocket.listen(5)
+        self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # create server socket
+        self.serverSocket.bind((self.host, self.port))  # assign IP address and a port number to socket instance
+        self.serverSocket.listen(5)  # listen/get ready for connections
         threading.Thread(target=self.acceptConnections).start()
 
     def guiSetup(self):
-        self.window.title("Chat Server")
+        self.window.title("Chat Server")  # title the chat server
         
-        self.chatLabel = Label(self.window, text="Chat Log", font=("Courier", 11))
+        self.chatLabel = Label(self.window, text="Chat Log", font=("Courier", 11))  # create label for chat log
         self.chatLabel.pack(fill='x')
         
         self.chatHistory = Text(self.window, state='disabled')
@@ -45,8 +45,8 @@ class ChatServer:
         
         while True:
             try:
-                connection, address = self.serverSocket.accept()
-                self.clients.append(connection)
+                connection, address = self.serverSocket.accept()  # wait for an incoming connection
+                self.clients.append(connection)  # append connection once created
                 print(f"Connection from {address}")
                 threading.Thread(target=self.rcvMessages, args=(connection,)).start()
             except Exception:
@@ -54,11 +54,17 @@ class ChatServer:
                 break
 
     def rcvMessages(self, client):
+        """
+        Receives messages from the clients
+        """
         
         def sendMessages(message):
-            for conn in self.clients:
+            """
+            Sends messages to the clients
+            """
+            for conn in self.clients:  # check if the current connection is not the client who sent the message
                 if conn != client:
-                    try:
+                    try:  # send the message in utf-8 form to the clients
                         conn.send(message.encode('utf-8'))
                     except Exception:
                         print(f"Error sending message: {Exception}")
@@ -66,14 +72,17 @@ class ChatServer:
                         conn.close()
                         
         def showchatHistory():
-            self.chatHistory.configure(state='normal')
-            self.chatHistory.insert('end', msg + '\n')
-            self.chatHistory.configure(state='disabled')
+            """
+            Displays chat history on window screen
+            """
+            self.chatHistory.configure(state='normal')  # enable text widget to allow modifications
+            self.chatHistory.insert('end', msg + '\n')  # insert new message into chat history text widget
+            self.chatHistory.configure(state='disabled')  # disable text widget to prevent further modifications
                 
         while True:
             try:
-                msg = client.recv(1024).decode('utf-8')
-                if msg:
+                msg = client.recv(1024).decode('utf-8')  # decode received message from client
+                if msg:  # check if any message has been received; if so, refer above inner functions
                     print(f"Message received: {msg}")
                     showchatHistory()
                     sendMessages(msg)
