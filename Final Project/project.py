@@ -195,13 +195,13 @@ class Game():
         incr = 10  # arbitrary
         
         if self.direction == "Left":
-            new_head_coords = (lastX - incr, lastY) # move the head to the left 
+            new_head_coords = (lastX - incr, lastY)  # move the head to the left
         elif self.direction == "Right":
-            new_head_coords = (lastX + incr, lastY) # move the head to the right
+            new_head_coords = (lastX + incr, lastY)  # move the head to the right
         elif self.direction == "Down":
-            new_head_coords = (lastX, lastY + incr) # move the head down
+            new_head_coords = (lastX, lastY + incr)  # move the head down
         else:
-            new_head_coords = (lastX, lastY - incr) # move the head up
+            new_head_coords = (lastX, lastY - incr)  # move the head up
             
         return new_head_coords # return the new head coordinates
 
